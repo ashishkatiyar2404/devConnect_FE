@@ -13,6 +13,7 @@ const Login = () => {
     emailId: "",
     password: "",
   });
+  const [error, setError] = useState("");
 
   const handleLoginBtn = async () => {
     try {
@@ -23,11 +24,10 @@ const Login = () => {
           withCredentials: true, // needed for setting the token/cookie for other API calls
         },
       );
-      console.log(response.data.data, "response");
       dispatch(addUser(response.data.data));
-      navigate("/signup");
+      navigate("/feed");
     } catch (e) {
-      console.log(e.message);
+      setError(e?.response?.data?.message);
     }
   };
   return (
@@ -69,6 +69,7 @@ const Login = () => {
               />
             </label>
           </div>
+          {error && <p className="text-red-500">{error}</p>}
           <div className="card-actions justify-center m-2">
             <button className="btn btn-primary" onClick={handleLoginBtn}>
               Login
