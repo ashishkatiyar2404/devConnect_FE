@@ -1,21 +1,34 @@
 import axios from "axios";
 import { useState } from "react";
+import { LOCAL_HOST_BASE_URL } from "../utils/constants";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
+import { useNavigate } from "react-router";
 
 const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [loginData, setLoginData] = useState({
     emailId: "",
     password: "",
   });
 
   const handleLoginBtn = async () => {
-    const response = await axios.post(
-      "http://localhost:8000/login",
-      loginData,
-      {
-        withCredentials: true, // needed for setting the token/cookie for other API calls
-      },
-    );
-    console.log(response, "response");
+    try {
+      const response = await axios.post(
+        LOCAL_HOST_BASE_URL + "/login",
+        loginData,
+        {
+          withCredentials: true, // needed for setting the token/cookie for other API calls
+        },
+      );
+      console.log(response.data.data, "response");
+      dispatch(addUser(response.data.data));
+      navigate("/signup");
+    } catch (e) {
+      console.log(e.message);
+    }
   };
   return (
     <div className="flex justify-center my-10">
@@ -34,7 +47,7 @@ const Login = () => {
                 onChange={(e) =>
                   setLoginData((prev) => ({
                     ...prev,
-                    email: e.target.value,
+                    emailId: e.target.value,
                   }))
                 }
               />
