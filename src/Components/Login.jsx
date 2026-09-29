@@ -116,7 +116,7 @@ const Login = () => {
                     <span className="label-text">Age</span>
                   </div>
                   <input
-                    type="text"
+                    type="number"
                     className="input input-bordered w-full max-w-xs"
                     value={signUpData.age}
                     onChange={(e) =>
@@ -157,7 +157,7 @@ const Login = () => {
                 <span className="label-text">Password</span>
               </div>
               <input
-                type="text"
+                type="password"
                 className="input input-bordered w-full max-w-xs"
                 value={isLoginForm ? loginData.password : signUpData.password}
                 onChange={(e) => {
