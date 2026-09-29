@@ -1,5 +1,26 @@
+import axios from "axios";
+import { LOCAL_HOST_BASE_URL } from "../utils/constants";
+import { useDispatch } from "react-redux";
+import { removeUserFromFeed } from "../utils/feedSlice";
+
 const UserCard = ({ userData }) => {
-  const { firstName, lastName, photoUrl, age, gender, about } = userData;
+  const dispatch = useDispatch();
+  const { _id, firstName, lastName, photoUrl, age, gender, about } = userData;
+
+  const handleRequestClick = async (status, _id) => {
+    try {
+      await axios.post(
+        `${LOCAL_HOST_BASE_URL}/request/send/${status}/${_id}`,
+        {},
+        { withCredentials: true },
+      );
+      dispatch(removeUserFromFeed(_id));
+    } catch (err) {
+      console.log(err.message);
+      console.log(err.response);
+    }
+  };
+
   return (
     <div className="flex justify-center my-5">
       <div className="card bg-amber-100 w-96 shadow-xl">
@@ -15,8 +36,18 @@ const UserCard = ({ userData }) => {
           {age && gender && <p>{age + ", " + gender}</p>}
           <p>{about}</p>
           <div className="card-actions justify-center my-4">
-            <button className="btn btn-primary">Ignore</button>
-            <button className="btn btn-secondary">Interested</button>
+            <button
+              className="btn btn-primary"
+              onClick={() => handleRequestClick("ignored", _id)}
+            >
+              Ignore
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => handleRequestClick("interested", _id)}
+            >
+              Interested
+            </button>
           </div>
         </div>
       </div>

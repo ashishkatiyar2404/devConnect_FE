@@ -27,6 +27,9 @@ const Feed = () => {
     getFeed();
   }, []);
 
+  if (!userFeedData) return;
+  if (userFeedData.length === 0) return <h1>No Feed</h1>;
+
   return (
     userFeedData && (
       <div>
