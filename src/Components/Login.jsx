@@ -25,7 +25,7 @@ const Login = () => {
         },
       );
       dispatch(addUser(response.data.data));
-      navigate("/feed");
+      navigate("/");
     } catch (e) {
       setError(e?.response?.data?.message);
     }
