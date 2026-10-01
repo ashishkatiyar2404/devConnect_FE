@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-import { LOCAL_HOST_BASE_URL } from "../utils/constants";
+import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { useNavigate } from "react-router";
@@ -27,18 +27,14 @@ const Login = () => {
   const [signUpData, setSignUpData] = useState(initialSignupState);
 
   const [error, setError] = useState("");
-  const [isLoginForm, setIsLogginForm] = useState(false);
+  const [isLoginForm, setIsLogginForm] = useState(true);
 
   const handleLoginBtn = async () => {
     setError("");
     try {
-      const response = await axios.post(
-        LOCAL_HOST_BASE_URL + "/login",
-        loginData,
-        {
-          withCredentials: true, // needed for setting the token/cookie for other API calls
-        },
-      );
+      const response = await axios.post(BASE_URL + "/login", loginData, {
+        withCredentials: true, // needed for setting the token/cookie for other API calls
+      });
       dispatch(addUser(response.data.data));
       navigate("/");
     } catch (e) {
@@ -49,13 +45,9 @@ const Login = () => {
   const handleSignupBtn = async () => {
     setError("");
     try {
-      const response = await axios.post(
-        LOCAL_HOST_BASE_URL + "/signup",
-        signUpData,
-        {
-          withCredentials: true,
-        },
-      );
+      const response = await axios.post(BASE_URL + "/signup", signUpData, {
+        withCredentials: true,
+      });
       dispatch(addUser(response.data.data));
       console.log(response);
       if (response.status === 200) {
@@ -189,7 +181,7 @@ const Login = () => {
 
         <div className="text-center mb-5">
           <p>
-            Already Registered User ?{" "}
+            {isLoginForm ? "Do not have account?" : "Already Registered User?"}
             <span
               className="cursor-pointer text-blue-400"
               onClick={() => {
@@ -199,7 +191,7 @@ const Login = () => {
                 setIsLogginForm((prev) => !prev);
               }}
             >
-              Login here
+              {!isLoginForm ? " Login here" : " Create account"}
             </span>
           </p>
         </div>

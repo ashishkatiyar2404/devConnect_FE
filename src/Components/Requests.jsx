@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect } from "react";
-import { DEFAULT_AVATAR, LOCAL_HOST_BASE_URL } from "../utils/constants";
+import { DEFAULT_AVATAR, BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addRequests, removeRequest } from "../utils/requestSlice";
 
@@ -11,10 +11,9 @@ const Requests = () => {
 
   const getConnectionRequest = async () => {
     try {
-      const response = await axios.get(
-        LOCAL_HOST_BASE_URL + "/user/request/received",
-        { withCredentials: true },
-      );
+      const response = await axios.get(BASE_URL + "/user/request/received", {
+        withCredentials: true,
+      });
 
       console.log(response.data.data);
       dispatch(addRequests(response.data.data));
@@ -27,7 +26,7 @@ const Requests = () => {
   const reviewRequest = async (status, _id) => {
     try {
       const response = await axios.post(
-        LOCAL_HOST_BASE_URL + `/request/review/${status}/${_id}`,
+        BASE_URL + `/request/review/${status}/${_id}`,
         {},
         { withCredentials: true },
       );

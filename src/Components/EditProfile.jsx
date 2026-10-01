@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
-import { LOCAL_HOST_BASE_URL } from "../utils/constants";
+import { BASE_URL } from "../utils/constants";
 import UserCard from "./UserCard";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
@@ -36,7 +36,7 @@ const EditProfile = ({ userData }) => {
       setIsLoading(true);
 
       const profileChangesResponse = await axios.patch(
-        `${LOCAL_HOST_BASE_URL}/profile/edit`,
+        `${BASE_URL}/profile/edit`,
         profileData,
         { withCredentials: true },
       );

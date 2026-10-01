@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LOCAL_HOST_BASE_URL } from "../utils/constants";
+import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { removeUserFromFeed } from "../utils/feedSlice";
 
@@ -10,7 +10,7 @@ const UserCard = ({ userData }) => {
   const handleRequestClick = async (status, _id) => {
     try {
       await axios.post(
-        `${LOCAL_HOST_BASE_URL}/request/send/${status}/${_id}`,
+        `${BASE_URL}/request/send/${status}/${_id}`,
         {},
         { withCredentials: true },
       );

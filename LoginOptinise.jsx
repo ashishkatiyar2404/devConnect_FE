@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 
-import { LOCAL_HOST_BASE_URL } from "../utils/constants";
+import { BASE_URL } from "../utils/constants";
 import { addUser } from "../utils/userSlice";
 
 const INITIAL_LOGIN_STATE = {
@@ -51,13 +51,9 @@ const Login = () => {
     const formData = isLoginForm ? loginData : signUpData;
 
     try {
-      const response = await axios.post(
-        `${LOCAL_HOST_BASE_URL}${endpoint}`,
-        formData,
-        {
-          withCredentials: true,
-        },
-      );
+      const response = await axios.post(`${BASE_URL}${endpoint}`, formData, {
+        withCredentials: true,
+      });
 
       dispatch(addUser(response.data.data));
 

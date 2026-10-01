@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect } from "react";
-import { DEFAULT_AVATAR, LOCAL_HOST_BASE_URL } from "../utils/constants";
+import { DEFAULT_AVATAR, BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionSlice";
 
@@ -10,12 +10,9 @@ const Connections = () => {
 
   const getAllConnections = async () => {
     try {
-      const response = await axios.get(
-        LOCAL_HOST_BASE_URL + "/user/connections",
-        {
-          withCredentials: true,
-        },
-      );
+      const response = await axios.get(BASE_URL + "/user/connections", {
+        withCredentials: true,
+      });
       dispatch(addConnections(response.data.data));
     } catch (err) {
       // Handle Error Case
