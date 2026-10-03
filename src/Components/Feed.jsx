@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect } from "react";
+import { useNavigate } from "react-router";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addFeed } from "../utils/feedSlice";
@@ -7,6 +8,7 @@ import UserCard from "./UserCard";
 
 const Feed = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const userFeedData = useSelector((store) => store.feed);
 
   useEffect(() => {
@@ -17,6 +19,8 @@ const Feed = () => {
         });
         dispatch(addFeed(feedResponse.data.data));
       } catch (error) {
+        // TODO : remove this and implement protected route
+        navigate("/login");
         console.log(error.message);
       }
     };

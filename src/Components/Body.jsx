@@ -1,8 +1,9 @@
+import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
+import axios from "axios";
+import "../utils/socket";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
-import { useEffect } from "react";
-import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";

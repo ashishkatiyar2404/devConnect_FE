@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect } from "react";
+import { Link } from "react-router";
 import { DEFAULT_AVATAR, BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionSlice";
@@ -67,6 +68,9 @@ const Connections = () => {
               {age && gender && <p>{age + ", " + gender}</p>}
               <p>{about}</p>
             </div>
+            <Link to={`/chat/${_id}`} className="ml-auto self-center">
+              <button className="btn btn-outline btn-secondary">💬 Chat</button>
+            </Link>
           </div>
         );
       })}
