@@ -3,6 +3,10 @@ import { useEffect } from "react";
 import { DEFAULT_AVATAR, BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addRequests, removeRequest } from "../utils/requestSlice";
+import PageContainer from "./PageContainer";
+import PageHeader from "./PageHeader";
+import EmptyState from "./EmptyState";
+import LoadingState from "./LoadingState";
 
 const Requests = () => {
   const dispatch = useDispatch();
@@ -43,56 +47,86 @@ const Requests = () => {
     getConnectionRequest();
   }, []);
 
-  if (!requestList) return <p>Loading...</p>;
+  if (!requestList) {
+    return <LoadingState label="Loading requests…" />;
+  }
 
-  if (requestList.length === 0)
-    return <h1 className="flex justify-center my-10"> No Requests Found</h1>;
+  if (requestList.length === 0) {
+    return (
+      <PageContainer>
+        <PageHeader
+          kicker="Inbox"
+          title="Connection requests"
+          description="Developers who want to connect with you."
+        />
+        <EmptyState
+          icon="◻"
+          title="Inbox is clear"
+          description="You have no pending requests. New signals will land here."
+        />
+      </PageContainer>
+    );
+  }
 
   return (
-    <div className="text-center my-10">
-      <h1 className="text-bold text-white text-3xl">Connection Requests</h1>
+    <PageContainer>
+      <PageHeader
+        kicker="Inbox"
+        title="Connection requests"
+        description={`${requestList.length} pending review.`}
+      />
 
-      {requestList.map((request) => {
-        const { _id, firstName, lastName, photoUrl, age, gender, about } =
-          request.fromUserId;
+      <ul className="space-y-4">
+        {requestList.map((request) => {
+          const { firstName, lastName, photoUrl, age, gender, about } =
+            request.fromUserId;
 
-        return (
-          <div
-            key={_id}
-            className="flex justify-between items-center m-4 p-4 rounded-lg bg-base-300 mx-auto max-w-2xl w-full"
-          >
-            <div>
+          return (
+            <li
+              key={request._id}
+              className="flex flex-col gap-4 rounded-2xl border border-base-content/10 bg-base-300 p-4 sm:flex-row sm:items-center sm:p-5"
+            >
               <img
-                alt="photo"
-                className="w-20 h-20 rounded-full"
+                alt={`${firstName} ${lastName}`}
+                className="h-16 w-16 shrink-0 rounded-full object-cover ring-1 ring-base-content/10 sm:h-20 sm:w-20"
                 src={photoUrl || DEFAULT_AVATAR}
               />
-            </div>
-            <div className="text-left mx-4 ">
-              <h2 className="font-bold text-xl">
-                {firstName + " " + lastName}
-              </h2>
-              {age && gender && <p>{age + ", " + gender}</p>}
-              <p>{about}</p>
-            </div>
-            <div>
-              <button
-                className="btn btn-primary mx-2"
-                onClick={() => reviewRequest("rejected", request._id)}
-              >
-                Reject
-              </button>
-              <button
-                className="btn btn-secondary mx-2"
-                onClick={() => reviewRequest("accepted", request._id)}
-              >
-                Accept
-              </button>
-            </div>
-          </div>
-        );
-      })}
-    </div>
+              <div className="min-w-0 flex-1 text-left">
+                <h2 className="font-display text-lg font-semibold">
+                  {firstName + " " + lastName}
+                </h2>
+                {age && gender && (
+                  <p className="text-sm capitalize text-base-content/60">
+                    {age}, {gender}
+                  </p>
+                )}
+                {about && (
+                  <p className="mt-1 line-clamp-2 text-sm text-base-content/70">
+                    {about}
+                  </p>
+                )}
+              </div>
+              <div className="flex w-full gap-2 sm:w-auto sm:shrink-0">
+                <button
+                  type="button"
+                  className="btn btn-outline btn-error min-h-10 flex-1 sm:flex-none"
+                  onClick={() => reviewRequest("rejected", request._id)}
+                >
+                  Reject
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary min-h-10 flex-1 sm:flex-none"
+                  onClick={() => reviewRequest("accepted", request._id)}
+                >
+                  Accept
+                </button>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </PageContainer>
   );
 };
 

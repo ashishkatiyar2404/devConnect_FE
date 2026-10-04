@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { createSocketConnection } from "../utils/socket";
 import { useSelector } from "react-redux";
+import PageContainer from "./PageContainer";
+import EmptyState from "./EmptyState";
 
 const Chat = () => {
   const { targetUserId } = useParams();
@@ -36,6 +38,7 @@ const Chat = () => {
   }, [userId, targetUserId]);
 
   const handleSend = () => {
+    console.log("ASHISH")
     const socket = createSocketConnection();
     socket.emit("sendMessage", {
       firstName: user.firstName,
@@ -47,41 +50,67 @@ const Chat = () => {
   };
 
   return (
-    <div className="w-3/4 mx-auto border border-gray-600 m-5 h-[70vh] flex flex-col">
-      <h1 className="p-5 border-b border-gray-600">Chat</h1>
-      <div className="flex-1 overflow-scroll p-5">
-        {messages.map((msg, index) => {
-          const isMe = msg.senderId === userId;
-          return (
-            <div
-              key={index}
-              className={`chat ${isMe ? "chat-end" : "chat-start"}`}
-            >
-              <div className="chat-header">
-                {msg.firstName}
-                <time className="text-xs opacity-50"> 2 hours ago</time>
-              </div>
-              <div className="chat-bubble">{msg.text}</div>
-              <div className="chat-footer opacity-50">Seen</div>
-            </div>
-          );
-        })}
+    <PageContainer>
+      <div className="mx-auto flex h-[calc(100dvh-12rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-base-content/10 bg-base-300 shadow-xl">
+        <header className="border-b border-base-content/10 px-4 py-4 sm:px-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+            Conversation
+          </p>
+          <h1 className="font-display text-xl font-semibold">Chat</h1>
+        </header>
+
+        <div className="flex-1 space-y-2 overflow-y-auto bg-base-200/40 p-4 sm:p-5">
+          {messages.length === 0 ? (
+            <EmptyState
+              title="No messages yet"
+              description="Say hello and start the conversation."
+            />
+          ) : (
+            messages.map((msg, index) => {
+              const isMe = msg.senderId === userId;
+              return (
+                <div
+                  key={index}
+                  className={`chat ${isMe ? "chat-end" : "chat-start"}`}
+                >
+                  <div className="chat-header text-xs opacity-70">
+                    {msg.firstName}
+                  </div>
+                  <div
+                    className={`chat-bubble ${isMe ? "chat-bubble-primary" : ""}`}
+                  >
+                    {msg.text}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        <div className="flex items-center gap-2 border-t border-base-content/10 bg-base-300 p-3 sm:p-4">
+          <input
+            type="text"
+            className="input input-bordered min-h-11 flex-1 bg-base-200"
+            placeholder="Write a message…"
+            value={newMessage}
+            onChange={(e) => {
+              console.log(e.target.value);
+              setNewMessage(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSend();
+            }}
+          />
+          <button
+            type="button"
+            className="btn btn-primary min-h-11"
+            onClick={handleSend}
+          >
+            Send
+          </button>
+        </div>
       </div>
-      <div className="p-5 border-t border-gray-600 flex items-center gap-2">
-        <input
-          type="text"
-          className="flex-1 border border-gray-500 text-black rounded p-2"
-          value={newMessage}
-          onChange={(e) => {
-            console.log(e.target.value);
-            setNewMessage(e.target.value);
-          }}
-        />
-        <button className="btn btn-secondary" onClick={handleSend}>
-          Send
-        </button>
-      </div>
-    </div>
+    </PageContainer>
   );
 };
 

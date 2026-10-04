@@ -33,9 +33,14 @@ const Body = () => {
   }, []);
 
   return (
-    <div>
+    <div className="flex min-h-dvh flex-col bg-base-100">
       <NavBar />
-      <Outlet />
+      <main className="relative flex-1">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(ellipse_at_top,oklch(78%_0.12_175_/_0.08),transparent_60%)]" />
+        <div className="relative">
+          <Outlet />
+        </div>
+      </main>
       <Footer />
     </div>
   );
