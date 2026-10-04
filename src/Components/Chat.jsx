@@ -13,22 +13,25 @@ const Chat = () => {
   const [messages, setMessage] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
-  console.log(messages);
-
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      console.log("❌ userId not available");
+      return;
+    }
 
     const socket = createSocketConnection();
     // Emit joinChat when Chat loads or the chat user changes
-    socket.emit("joinChat", {
-      firstName: user.firstName,
-      userId,
-      targetUserId,
+    socket.on("connect", () => {
+      socket.emit("joinChat", {
+        firstName: user.firstName,
+
+        userId,
+
+        targetUserId,
+      });
     });
 
     socket.on("messageReceived", ({ firstName, text, senderId }) => {
-      console.log(firstName);
-      console.log(text);
       setMessage((messages) => [...messages, { firstName, text, senderId }]);
     });
 
@@ -38,7 +41,6 @@ const Chat = () => {
   }, [userId, targetUserId]);
 
   const handleSend = () => {
-    console.log("ASHISH")
     const socket = createSocketConnection();
     socket.emit("sendMessage", {
       firstName: user.firstName,
@@ -94,7 +96,6 @@ const Chat = () => {
             placeholder="Write a message…"
             value={newMessage}
             onChange={(e) => {
-              console.log(e.target.value);
               setNewMessage(e.target.value);
             }}
             onKeyDown={(e) => {
