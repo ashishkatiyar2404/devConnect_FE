@@ -1,2 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: nightline --default;
+}
+
+@plugin "daisyui/theme" {
+  name: "nightline";
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+
+  --color-base-100: oklch(16% 0.025 260);
+  --color-base-200: oklch(20% 0.03 260);
+  --color-base-300: oklch(24% 0.032 258);
+  --color-base-content: oklch(93% 0.015 250);
+
+  --color-primary: oklch(78% 0.12 175);
+  --color-primary-content: oklch(18% 0.04 175);
+
+  --color-secondary: oklch(58% 0.07 280);
+  --color-secondary-content: oklch(96% 0.01 280);
+
+  --color-accent: oklch(82% 0.12 95);
+  --color-accent-content: oklch(22% 0.04 95);
+
+  --color-neutral: oklch(18% 0.028 260);
+  --color-neutral-content: oklch(90% 0.012 250);
+
+  --color-info: oklch(70% 0.1 230);
+  --color-success: oklch(72% 0.15 155);
+  --color-warning: oklch(80% 0.14 85);
+  --color-error: oklch(68% 0.18 20);
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.65rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+}
+
+@theme {
+  --font-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+body {
+  min-height: 100dvh;
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
+}
+
+#root {
+  min-height: 100dvh;
+}

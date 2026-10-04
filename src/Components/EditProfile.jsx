@@ -4,6 +4,7 @@ import { BASE_URL } from "../utils/constants";
 import UserCard from "./UserCard";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import PageHeader from "./PageHeader";
 
 const EditProfile = ({ userData }) => {
   const dispatch = useDispatch();
@@ -56,112 +57,137 @@ const EditProfile = ({ userData }) => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row justify-center items-start gap-8 my-10 px-4">
-      <div className="card bg-base-300 w-full max-w-md shadow-xl">
-        <div className="card-body">
-          <h2 className="card-title justify-center text-xl font-bold">
-            Edit Profile
-          </h2>
+    <div>
+      <PageHeader
+        kicker="You"
+        title="Edit profile"
+        description="This is how other developers will see you in the feed."
+      />
 
-          <div className="space-y-3">
-            <label className="form-control w-full">
-              <span className="label-text mb-1">First Name</span>
-              <input
-                name="firstName"
-                type="text"
-                className="input input-bordered w-full"
-                value={profileData.firstName}
-                onChange={handleInputChange}
-              />
-            </label>
+      <div className="flex flex-col items-stretch justify-center gap-8 lg:flex-row lg:items-start">
+        <div className="card w-full max-w-md border border-base-content/10 bg-base-300 shadow-xl">
+          <div className="card-body">
+            <h2 className="font-display text-lg font-semibold">Details</h2>
 
-            <label className="form-control w-full">
-              <span className="label-text mb-1">Last Name</span>
-              <input
-                name="lastName"
-                type="text"
-                className="input input-bordered w-full"
-                value={profileData.lastName}
-                onChange={handleInputChange}
-              />
-            </label>
-
-            <div className="flex gap-4">
-              <label className="form-control w-1/2">
-                <span className="label-text mb-1">Age</span>
+            <div className="space-y-3">
+              <label className="form-control w-full">
+                <span className="label-text mb-1 text-base-content/70">
+                  First name
+                </span>
                 <input
-                  name="age"
-                  type="number"
-                  min="18"
-                  className="input input-bordered w-full"
-                  value={profileData.age}
+                  name="firstName"
+                  type="text"
+                  className="input input-bordered w-full bg-base-200"
+                  value={profileData.firstName}
                   onChange={handleInputChange}
                 />
               </label>
 
-              <label className="form-control w-1/2">
-                <span className="label-text mb-1">Gender</span>
-                <select
-                  name="gender"
-                  className="select select-bordered w-full"
-                  value={profileData.gender}
+              <label className="form-control w-full">
+                <span className="label-text mb-1 text-base-content/70">
+                  Last name
+                </span>
+                <input
+                  name="lastName"
+                  type="text"
+                  className="input input-bordered w-full bg-base-200"
+                  value={profileData.lastName}
                   onChange={handleInputChange}
-                >
-                  <option value="">Select</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="others">Other</option>
-                </select>
+                />
+              </label>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <label className="form-control w-full sm:w-1/2">
+                  <span className="label-text mb-1 text-base-content/70">
+                    Age
+                  </span>
+                  <input
+                    name="age"
+                    type="number"
+                    min="18"
+                    className="input input-bordered w-full bg-base-200"
+                    value={profileData.age}
+                    onChange={handleInputChange}
+                  />
+                </label>
+
+                <label className="form-control w-full sm:w-1/2">
+                  <span className="label-text mb-1 text-base-content/70">
+                    Gender
+                  </span>
+                  <select
+                    name="gender"
+                    className="select select-bordered w-full bg-base-200"
+                    value={profileData.gender}
+                    onChange={handleInputChange}
+                  >
+                    <option value="">Select</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="others">Other</option>
+                  </select>
+                </label>
+              </div>
+
+              <label className="form-control w-full">
+                <span className="label-text mb-1 text-base-content/70">
+                  Photo URL
+                </span>
+                <input
+                  name="photoUrl"
+                  type="text"
+                  className="input input-bordered w-full bg-base-200"
+                  value={profileData.photoUrl}
+                  onChange={handleInputChange}
+                />
+              </label>
+
+              <label className="form-control w-full">
+                <span className="label-text mb-1 text-base-content/70">
+                  About
+                </span>
+                <textarea
+                  name="about"
+                  rows="3"
+                  className="textarea textarea-bordered w-full bg-base-200"
+                  value={profileData.about}
+                  onChange={handleInputChange}
+                />
               </label>
             </div>
 
-            <label className="form-control w-full">
-              <span className="label-text mb-1">Photo URL</span>
-              <input
-                name="photoUrl"
-                type="text"
-                className="input input-bordered w-full"
-                value={profileData.photoUrl}
-                onChange={handleInputChange}
-              />
-            </label>
+            {error && (
+              <div className="alert alert-error alert-soft mt-2 text-sm">
+                {error}
+              </div>
+            )}
 
-            <label className="form-control w-full">
-              <span className="label-text mb-1">About</span>
-              <textarea
-                name="about"
-                rows="3"
-                className="textarea textarea-bordered w-full"
-                value={profileData.about}
-                onChange={handleInputChange}
-              />
-            </label>
+            <div className="card-actions mt-4">
+              <button
+                className="btn btn-primary min-h-11 w-full"
+                onClick={handleSaveChanges}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <span className="loading loading-spinner loading-sm"></span>
+                ) : (
+                  "Save Changes"
+                )}
+              </button>
+            </div>
           </div>
+        </div>
 
-          {error && (
-            <p className="text-error text-sm text-center mt-2">{error}</p>
-          )}
-
-          <div className="card-actions justify-center mt-4">
-            <button
-              className="btn btn-primary w-full"
-              onClick={handleSaveChanges}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <span className="loading loading-spinner loading-sm"></span>
-              ) : (
-                "Save Changes"
-              )}
-            </button>
-          </div>
+        <div className="lg:sticky lg:top-24">
+          <p className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.18em] text-base-content/40">
+            Preview
+          </p>
+          <UserCard userData={profileData} showActions={false} />
         </div>
       </div>
 
-      <UserCard userData={profileData} />
-
       {toast && (
-        <div className="toast toast-top toast-center">
+        <div className="toast toast-top toast-end z-50">
           <div className="alert alert-success">
             <span>Profile updated successfully!</span>
           </div>

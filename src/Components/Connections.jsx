@@ -1,8 +1,13 @@
 import axios from "axios";
 import { useEffect } from "react";
+import { Link } from "react-router";
 import { DEFAULT_AVATAR, BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionSlice";
+import PageContainer from "./PageContainer";
+import PageHeader from "./PageHeader";
+import EmptyState from "./EmptyState";
+import LoadingState from "./LoadingState";
 
 const Connections = () => {
   const dispatch = useDispatch();
@@ -25,52 +30,80 @@ const Connections = () => {
     getAllConnections();
   }, []);
 
-  if (!connectionList) return <p>Loading.....</p>;
+  if (!connectionList) {
+    return <LoadingState label="Loading connections…" />;
+  }
 
-  if (!connectionList || connectionList.length === 0) {
+  if (connectionList.length === 0) {
     return (
-      <div className="text-center my-16 px-4">
-        <h2 className="text-2xl font-semibold text-gray-300">
-          No Connections Found
-        </h2>
-        <p className="text-gray-500 mt-2">
-          Explore and connect with other users to see them here.
-        </p>
-      </div>
+      <PageContainer>
+        <PageHeader
+          kicker="Network"
+          title="Connections"
+          description="People you've both signalled interest in."
+        />
+        <EmptyState
+          icon="◎"
+          title="No connections yet"
+          description="Explore the feed and mark developers as interested. When they do the same, they show up here."
+        />
+      </PageContainer>
     );
   }
 
   return (
-    <div className="text-center my-10">
-      <h1 className="text-bold text-white text-3xl">Connections</h1>
+    <PageContainer>
+      <PageHeader
+        kicker="Network"
+        title="Connections"
+        description={`${connectionList.length} developer${
+          connectionList.length === 1 ? "" : "s"
+        } in your circle.`}
+      />
 
-      {connectionList.map((connection) => {
-        const { _id, firstName, lastName, photoUrl, age, gender, about } =
-          connection;
+      <ul className="space-y-4">
+        {connectionList.map((connection) => {
+          const { _id, firstName, lastName, photoUrl, age, gender, about } =
+            connection;
 
-        return (
-          <div
-            key={_id}
-            className="flex m-4 p-4 rounded-lg bg-base-300 w-1/2 mx-auto"
-          >
-            <div>
+          return (
+            <li
+              key={_id}
+              className="flex flex-col gap-4 rounded-2xl border border-base-content/10 bg-base-300 p-4 sm:flex-row sm:items-center sm:p-5"
+            >
               <img
-                alt="photo"
-                className="w-20 h-20 rounded-full object-cover"
+                alt={`${firstName} ${lastName}`}
+                className="h-16 w-16 shrink-0 rounded-full object-cover ring-1 ring-base-content/10 sm:h-20 sm:w-20"
                 src={photoUrl || DEFAULT_AVATAR}
               />
-            </div>
-            <div className="text-left mx-4 ">
-              <h2 className="font-bold text-xl">
-                {firstName + " " + lastName}
-              </h2>
-              {age && gender && <p>{age + ", " + gender}</p>}
-              <p>{about}</p>
-            </div>
-          </div>
-        );
-      })}
-    </div>
+              <div className="min-w-0 flex-1 text-left">
+                <h2 className="font-display text-lg font-semibold">
+                  {firstName + " " + lastName}
+                </h2>
+                {age && gender && (
+                  <p className="text-sm capitalize text-base-content/60">
+                    {age}, {gender}
+                  </p>
+                )}
+                {about && (
+                  <p className="mt-1 line-clamp-2 text-sm text-base-content/70">
+                    {about}
+                  </p>
+                )}
+              </div>
+              <Link
+                to={`/chat/${_id}`}
+                className="shrink-0 sm:self-center"
+              >
+                <button type="button" className="btn btn-primary btn-sm min-h-10 w-full sm:w-auto">
+                  Chat
+                </button>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </PageContainer>
   );
 };
 
