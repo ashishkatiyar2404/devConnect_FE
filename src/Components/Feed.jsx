@@ -5,6 +5,10 @@ import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addFeed } from "../utils/feedSlice";
 import UserCard from "./UserCard";
+import PageContainer from "./PageContainer";
+import PageHeader from "./PageHeader";
+import EmptyState from "./EmptyState";
+import LoadingState from "./LoadingState";
 
 const Feed = () => {
   const dispatch = useDispatch();
@@ -28,15 +32,31 @@ const Feed = () => {
     getFeed();
   }, []);
 
-  if (!userFeedData) return;
-  if (userFeedData.length === 0) return <h1>No Feed</h1>;
+  if (!userFeedData) {
+    return <LoadingState label="Finding developers…" />;
+  }
+
+  if (userFeedData.length === 0) {
+    return (
+      <PageContainer>
+        <EmptyState
+          icon="✦"
+          title="You're all caught up"
+          description="No more profiles in your feed right now. Check back soon for new developers to meet."
+        />
+      </PageContainer>
+    );
+  }
 
   return (
-    userFeedData && (
-      <div>
-        <UserCard userData={userFeedData[0]} />
-      </div>
-    )
+    <PageContainer>
+      <PageHeader
+        kicker="Discover"
+        title="Your feed"
+        description="Signal interest in developers you want to work with. They only see you if they signal back."
+      />
+      <UserCard userData={userFeedData[0]} />
+    </PageContainer>
   );
 };
 

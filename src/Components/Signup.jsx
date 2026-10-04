@@ -1,5 +1,7 @@
+import Login from "./Login";
+
 const Signup = () => {
-  return <div>Signup</div>;
+  return <Login initialMode="signup" />;
 };
 
 export default Signup;
