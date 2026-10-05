@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useState } from "react";
-import { BASE_URL } from "../utils/constants";
+import { BASE_URL } from "../../utils/constants";
 import { useDispatch } from "react-redux";
-import { addUser } from "../utils/userSlice";
+import { addUser } from "../profile/userSlice";
 import { useNavigate } from "react-router";
-import BrandMark from "./BrandMark";
+import BrandMark from "../../components/common/BrandMark";
 
 const initalLoginState = {
   emailId: "",
@@ -80,8 +80,7 @@ const Login = ({ initialMode = "login" }) => {
               Meet developers who want to build.
             </h1>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-base-content/60">
-              Discover people, send a signal, and chat when the match is
-              mutual.
+              Discover people, send a signal, and chat when the match is mutual.
             </p>
             <ul className="mt-8 space-y-3 text-sm text-base-content/75">
               <li className="flex gap-2">

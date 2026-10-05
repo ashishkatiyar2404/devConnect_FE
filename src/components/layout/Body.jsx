@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
 import axios from "axios";
-import "../utils/socket";
+import "../../api/socket";
 import NavBar from "./NavBar";
-import Footer from "./Footer";
-import { BASE_URL } from "../utils/constants";
+import { BASE_URL } from "../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { addUser } from "../utils/userSlice";
+import { addUser } from "../../features/profile/userSlice";
+import Footer from "./Footer";
 
 const Body = () => {
   const dispatch = useDispatch();

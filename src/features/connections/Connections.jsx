@@ -1,13 +1,13 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { Link } from "react-router";
-import { DEFAULT_AVATAR, BASE_URL } from "../utils/constants";
+import { DEFAULT_AVATAR, BASE_URL } from "../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { addConnections } from "../utils/connectionSlice";
-import PageContainer from "./PageContainer";
-import PageHeader from "./PageHeader";
-import EmptyState from "./EmptyState";
-import LoadingState from "./LoadingState";
+import { addConnections } from "./connectionSlice";
+import PageContainer from "../../components/layout/PageContainer";
+import PageHeader from "../../components/layout/PageHeader";
+import LoadingState from "../../components/common/LoadingState";
+import EmptyState from "../../components/common/EmptyState";
 
 const Connections = () => {
   const dispatch = useDispatch();
@@ -91,11 +91,11 @@ const Connections = () => {
                   </p>
                 )}
               </div>
-              <Link
-                to={`/chat/${_id}`}
-                className="shrink-0 sm:self-center"
-              >
-                <button type="button" className="btn btn-primary btn-sm min-h-10 w-full sm:w-auto">
+              <Link to={`/chat/${_id}`} className="shrink-0 sm:self-center">
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm min-h-10 w-full sm:w-auto"
+                >
                   Chat
                 </button>
               </Link>

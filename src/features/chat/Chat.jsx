@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import { createSocketConnection } from "../utils/socket";
+import { createSocketConnection } from "../../api/socket";
 import { useSelector } from "react-redux";
-import PageContainer from "./PageContainer";
-import EmptyState from "./EmptyState";
+import PageContainer from "../../components/layout/PageContainer";
+import EmptyState from "../../components/common/EmptyState";
 import axios from "axios";
-import { BASE_URL } from "../utils/constants";
+import { BASE_URL } from "../../utils/constants";
 
 const Chat = () => {
   const { targetUserId } = useParams();

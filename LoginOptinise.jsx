@@ -1,3 +1,4 @@
+/** TEMPORARY TEST COMPONENT */
 import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";

@@ -1,7 +1,7 @@
 import axios from "axios";
-import { BASE_URL, DEFAULT_AVATAR } from "../utils/constants";
+import { BASE_URL, DEFAULT_AVATAR } from "../../utils/constants";
 import { useDispatch } from "react-redux";
-import { removeUserFromFeed } from "../utils/feedSlice";
+import { removeUserFromFeed } from "../../features/feed/feedSlice";
 
 const UserCard = ({ userData, showActions = true }) => {
   const dispatch = useDispatch();
