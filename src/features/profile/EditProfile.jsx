@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useState } from "react";
-import { BASE_URL } from "../utils/constants";
-import UserCard from "./UserCard";
+import { BASE_URL } from "../../utils/constants";
+import UserCard from "../../components/common/UserCard";
 import { useDispatch } from "react-redux";
-import { addUser } from "../utils/userSlice";
-import PageHeader from "./PageHeader";
+import { addUser } from "./userSlice";
+import PageHeader from "../../components/layout/PageHeader";
 
 const EditProfile = ({ userData }) => {
   const dispatch = useDispatch();

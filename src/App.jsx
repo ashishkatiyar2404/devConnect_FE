@@ -1,13 +1,13 @@
 import { Route, Routes } from "react-router";
 
-import Body from "./Components/Body";
-import Login from "./Components/Login";
-import Signup from "./Components/Signup";
-import Feed from "./Components/Feed";
-import Profile from "./Components/Profile";
-import Connections from "./Components/Connections";
-import Requests from "./Components/Requests";
-import Chat from "./Components/Chat";
+import Body from "./components/layout/Body";
+import Login from "./features/auth/Login";
+import Signup from "./features/auth/Signup";
+import Feed from "./features/feed/Feed";
+import Profile from "./features/profile/Profile";
+import Connections from "./features/connections/Connections";
+import Requests from "./features/connections/Requests";
+import Chat from "./features/chat/Chat";
 
 function App() {
   return (

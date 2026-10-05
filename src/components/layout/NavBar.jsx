@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router";
-import { BASE_URL, DEFAULT_AVATAR } from "../utils/constants";
-import { removeUser } from "../utils/userSlice";
-import BrandMark from "./BrandMark";
+import { BASE_URL, DEFAULT_AVATAR } from "../../utils/constants";
+import { removeUser } from "../../features/profile/userSlice";
+import BrandMark from "../common/BrandMark";
 
 const NAV_LINKS = [
   { to: "/", label: "Feed" },

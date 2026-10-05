@@ -1,14 +1,14 @@
 import axios from "axios";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import { BASE_URL } from "../utils/constants";
+import { BASE_URL } from "../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { addFeed } from "../utils/feedSlice";
-import UserCard from "./UserCard";
-import PageContainer from "./PageContainer";
-import PageHeader from "./PageHeader";
-import EmptyState from "./EmptyState";
-import LoadingState from "./LoadingState";
+import { addFeed } from "./feedSlice";
+import PageContainer from "../../components/layout/PageContainer";
+import PageHeader from "../../components/layout/PageHeader";
+import EmptyState from "../../components/common/EmptyState";
+import LoadingState from "../../components/common/LoadingState";
+import UserCard from "../../components/common/UserCard";
 
 const Feed = () => {
   const dispatch = useDispatch();

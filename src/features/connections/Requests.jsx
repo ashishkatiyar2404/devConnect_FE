@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useEffect } from "react";
-import { DEFAULT_AVATAR, BASE_URL } from "../utils/constants";
+import { DEFAULT_AVATAR, BASE_URL } from "../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { addRequests, removeRequest } from "../utils/requestSlice";
-import PageContainer from "./PageContainer";
-import PageHeader from "./PageHeader";
-import EmptyState from "./EmptyState";
-import LoadingState from "./LoadingState";
+import { addRequests, removeRequest } from "./requestSlice";
+import PageContainer from "../../components/layout/PageContainer";
+import PageHeader from "../../components/layout/PageHeader";
+import LoadingState from "../../components/common/LoadingState";
+import EmptyState from "../../components/common/EmptyState";
 
 const Requests = () => {
   const dispatch = useDispatch();
