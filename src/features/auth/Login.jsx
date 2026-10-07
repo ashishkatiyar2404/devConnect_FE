@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../profile/userSlice";
 import { useNavigate } from "react-router";
 import BrandMark from "../../components/common/BrandMark";
+import { getErrorMessage } from "../../utils/errorUtils";
 
 const initalLoginState = {
   emailId: "",
@@ -24,41 +25,57 @@ const Login = ({ initialMode = "login" }) => {
   const navigate = useNavigate();
 
   const [loginData, setLoginData] = useState(initalLoginState);
-
   const [signUpData, setSignUpData] = useState(initialSignupState);
-
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [isLoginForm, setIsLogginForm] = useState(initialMode !== "signup");
 
   const handleLoginBtn = async () => {
+    if (isLoading) return; // Prevent duplicate requests
     setError("");
+    setIsLoading(true);
+
     try {
       const response = await axios.post(BASE_URL + "/login", loginData, {
-        withCredentials: true, // needed for setting the token/cookie for other API calls
+        withCredentials: true,
       });
-      dispatch(addUser(response.data.data));
+      dispatch(addUser(response.data?.data));
       navigate("/");
     } catch (e) {
-      setError(e?.response?.data?.message);
+      setError(
+        getErrorMessage(
+          e,
+          "Login failed. Please check your credentials and try again.",
+        ),
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleSignupBtn = async () => {
+    if (isLoading) return; // Prevent duplicate requests
     setError("");
+    setIsLoading(true);
+
     try {
       const response = await axios.post(BASE_URL + "/signup", signUpData, {
         withCredentials: true,
       });
-      dispatch(addUser(response.data.data));
-      console.log(response);
-      if (response.status === 200) {
+
+      if (response.status === 201 || response.status === 200) {
         navigate("/login");
         setIsLogginForm(true);
       }
     } catch (err) {
-      console.log(err);
-      console.log(err.response);
-      setError(err?.response?.data?.message);
+      setError(
+        getErrorMessage(
+          err,
+          "Registration failed. Please verify your details and try again.",
+        ),
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -125,11 +142,13 @@ const Login = ({ initialMode = "login" }) => {
               role="tab"
               className={`tab flex-1 ${isLoginForm ? "tab-active" : ""}`}
               onClick={() => {
+                if (isLoading) return;
                 setLoginData(initalLoginState);
                 setSignUpData(initialSignupState);
                 setError("");
                 setIsLogginForm(true);
               }}
+              disabled={isLoading}
             >
               Login
             </button>
@@ -138,11 +157,13 @@ const Login = ({ initialMode = "login" }) => {
               role="tab"
               className={`tab flex-1 ${!isLoginForm ? "tab-active" : ""}`}
               onClick={() => {
+                if (isLoading) return;
                 setLoginData(initalLoginState);
                 setSignUpData(initialSignupState);
                 setError("");
                 setIsLogginForm(false);
               }}
+              disabled={isLoading}
             >
               Sign up
             </button>
@@ -165,6 +186,7 @@ const Login = ({ initialMode = "login" }) => {
                         firstName: e.target.value,
                       }))
                     }
+                    disabled={isLoading}
                   />
                 </label>
                 <label className="form-control w-full">
@@ -181,6 +203,7 @@ const Login = ({ initialMode = "login" }) => {
                         lastName: e.target.value,
                       }))
                     }
+                    disabled={isLoading}
                   />
                 </label>
                 <label className="form-control w-full">
@@ -197,6 +220,7 @@ const Login = ({ initialMode = "login" }) => {
                         age: e.target.value,
                       }))
                     }
+                    disabled={isLoading}
                   />
                 </label>
               </>
@@ -211,17 +235,18 @@ const Login = ({ initialMode = "login" }) => {
                 value={isLoginForm ? loginData.emailId : signUpData.emailId}
                 onChange={(e) => {
                   if (isLoginForm) {
-                    return setLoginData((prev) => ({
+                    setLoginData((prev) => ({
                       ...prev,
                       emailId: e.target.value,
                     }));
                   } else {
-                    return setSignUpData((prev) => ({
+                    setSignUpData((prev) => ({
                       ...prev,
                       emailId: e.target.value,
                     }));
                   }
                 }}
+                disabled={isLoading}
               />
             </label>
             <label className="form-control w-full">
@@ -234,17 +259,18 @@ const Login = ({ initialMode = "login" }) => {
                 value={isLoginForm ? loginData.password : signUpData.password}
                 onChange={(e) => {
                   if (isLoginForm) {
-                    return setLoginData((prev) => ({
+                    setLoginData((prev) => ({
                       ...prev,
                       password: e.target.value,
                     }));
                   } else {
-                    return setSignUpData((prev) => ({
+                    setSignUpData((prev) => ({
                       ...prev,
                       password: e.target.value,
                     }));
                   }
                 }}
+                disabled={isLoading}
               />
             </label>
           </div>
@@ -259,8 +285,20 @@ const Login = ({ initialMode = "login" }) => {
             type="button"
             className="btn btn-primary mt-6 min-h-11 w-full"
             onClick={isLoginForm ? handleLoginBtn : handleSignupBtn}
+            disabled={isLoading}
           >
-            {isLoginForm ? "Login" : "Sign Up"}
+            {isLoading ? (
+              <>
+                <span className="loading loading-spinner loading-sm mr-2" />
+                <span>
+                  {isLoginForm ? "Signing in…" : "Creating account…"}
+                </span>
+              </>
+            ) : isLoginForm ? (
+              "Login"
+            ) : (
+              "Sign Up"
+            )}
           </button>
         </div>
       </div>

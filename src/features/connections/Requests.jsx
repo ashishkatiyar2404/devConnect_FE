@@ -1,5 +1,6 @@
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { DEFAULT_AVATAR, BASE_URL } from "../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addRequests, removeRequest } from "./requestSlice";
@@ -7,51 +8,94 @@ import PageContainer from "../../components/layout/PageContainer";
 import PageHeader from "../../components/layout/PageHeader";
 import LoadingState from "../../components/common/LoadingState";
 import EmptyState from "../../components/common/EmptyState";
+import ErrorState from "../../components/common/ErrorState";
+import { getErrorMessage } from "../../utils/errorUtils";
 
 const Requests = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const requestList = useSelector((store) => store.requests);
-  console.log(requestList);
 
-  const getConnectionRequest = async () => {
-    try {
-      const response = await axios.get(BASE_URL + "/user/request/received", {
-        withCredentials: true,
-      });
+  const [isLoading, setIsLoading] = useState(!requestList);
+  const [fetchError, setFetchError] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [activeAction, setActiveAction] = useState(null); // { id: string, status: string } | null
+  const [actionError, setActionError] = useState(null); // { id: string, message: string } | null
 
-      console.log(response.data.data);
-      dispatch(addRequests(response.data.data));
-    } catch (err) {
-      console.log(err);
-      console.log(err.response);
-    }
+  useEffect(() => {
+    let isCancelled = false;
+
+    const fetchRequests = async () => {
+      try {
+        const response = await axios.get(BASE_URL + "/user/request/received", {
+          withCredentials: true,
+        });
+        if (!isCancelled) {
+          dispatch(addRequests(response.data?.data || []));
+          setFetchError(null);
+        }
+      } catch (err) {
+        if (!isCancelled) {
+          if (err.response?.status === 401) {
+            navigate("/login");
+            return;
+          }
+          const message = getErrorMessage(
+            err,
+            "Failed to load connection requests. Please try again.",
+          );
+          setFetchError(message);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchRequests();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [dispatch, navigate, refreshTrigger]);
+
+  const handleRefresh = () => {
+    if (isLoading) return;
+    setIsLoading(true);
+    setFetchError(null);
+    setRefreshTrigger((prev) => prev + 1);
   };
 
   const reviewRequest = async (status, _id) => {
+    if (activeAction?.id === _id) return; // Prevent duplicate requests for this item
+
+    setActiveAction({ id: _id, status });
+    setActionError(null);
+
     try {
-      const response = await axios.post(
+      await axios.post(
         BASE_URL + `/request/review/${status}/${_id}`,
         {},
         { withCredentials: true },
       );
-
       dispatch(removeRequest(_id));
-      console.log(response);
     } catch (err) {
-      console.log(err.response);
-      console.log(err.message);
+      const message = getErrorMessage(
+        err,
+        `Failed to ${status === "accepted" ? "accept" : "reject"} request. Please try again.`,
+      );
+      setActionError({ id: _id, message });
+    } finally {
+      setActiveAction(null);
     }
   };
 
-  useEffect(() => {
-    getConnectionRequest();
-  }, []);
-
-  if (!requestList) {
+  if (isLoading && !requestList) {
     return <LoadingState label="Loading requests…" />;
   }
 
-  if (requestList.length === 0) {
+  if (fetchError && !requestList) {
     return (
       <PageContainer>
         <PageHeader
@@ -59,6 +103,29 @@ const Requests = () => {
           title="Connection requests"
           description="Developers who want to connect with you."
         />
+        <ErrorState
+          title="Unable to load requests"
+          description={fetchError}
+          onRetry={handleRefresh}
+          retryLabel="Retry"
+        />
+      </PageContainer>
+    );
+  }
+
+  if (!requestList || requestList.length === 0) {
+    return (
+      <PageContainer>
+        <PageHeader
+          kicker="Inbox"
+          title="Connection requests"
+          description="Developers who want to connect with you."
+        />
+        {fetchError && (
+          <div className="alert alert-error alert-soft mb-6 text-sm">
+            {fetchError}
+          </div>
+        )}
         <EmptyState
           icon="◻"
           title="Inbox is clear"
@@ -74,12 +141,34 @@ const Requests = () => {
         kicker="Inbox"
         title="Connection requests"
         description={`${requestList.length} pending review.`}
+        actions={
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={handleRefresh}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <span className="loading loading-spinner loading-xs" />
+            ) : (
+              "Refresh"
+            )}
+          </button>
+        }
       />
+
+      {fetchError && (
+        <div className="alert alert-error alert-soft mb-4 text-sm">
+          {fetchError}
+        </div>
+      )}
 
       <ul className="space-y-4">
         {requestList.map((request) => {
-          const { firstName, lastName, photoUrl, age, gender, about } =
-            request.fromUserId;
+          const sender = request.fromUserId || {};
+          const { firstName, lastName, photoUrl, age, gender, about } = sender;
+          const isProcessingThis = activeAction?.id === request._id;
+          const isItemError = actionError?.id === request._id;
 
           return (
             <li
@@ -87,13 +176,16 @@ const Requests = () => {
               className="flex flex-col gap-4 rounded-2xl border border-base-content/10 bg-base-300 p-4 sm:flex-row sm:items-center sm:p-5"
             >
               <img
-                alt={`${firstName} ${lastName}`}
+                alt={
+                  `${firstName || ""} ${lastName || ""}`.trim() ||
+                  "Profile photo"
+                }
                 className="h-16 w-16 shrink-0 rounded-full object-cover ring-1 ring-base-content/10 sm:h-20 sm:w-20"
                 src={photoUrl || DEFAULT_AVATAR}
               />
               <div className="min-w-0 flex-1 text-left">
                 <h2 className="font-display text-lg font-semibold">
-                  {firstName + " " + lastName}
+                  {`${firstName || ""} ${lastName || ""}`.trim() || "Developer"}
                 </h2>
                 {age && gender && (
                   <p className="text-sm capitalize text-base-content/60">
@@ -105,21 +197,43 @@ const Requests = () => {
                     {about}
                   </p>
                 )}
+
+                {isItemError && (
+                  <div className="alert alert-error alert-soft mt-2 py-2 text-xs">
+                    <span>{actionError.message}</span>
+                  </div>
+                )}
               </div>
               <div className="flex w-full gap-2 sm:w-auto sm:shrink-0">
                 <button
                   type="button"
                   className="btn btn-outline btn-error min-h-10 flex-1 sm:flex-none"
                   onClick={() => reviewRequest("rejected", request._id)}
+                  disabled={isProcessingThis}
                 >
-                  Reject
+                  {isProcessingThis && activeAction?.status === "rejected" ? (
+                    <>
+                      <span className="loading loading-spinner loading-xs" />
+                      <span>Rejecting…</span>
+                    </>
+                  ) : (
+                    "Reject"
+                  )}
                 </button>
                 <button
                   type="button"
                   className="btn btn-primary min-h-10 flex-1 sm:flex-none"
                   onClick={() => reviewRequest("accepted", request._id)}
+                  disabled={isProcessingThis}
                 >
-                  Accept
+                  {isProcessingThis && activeAction?.status === "accepted" ? (
+                    <>
+                      <span className="loading loading-spinner loading-xs" />
+                      <span>Accepting…</span>
+                    </>
+                  ) : (
+                    "Accept"
+                  )}
                 </button>
               </div>
             </li>

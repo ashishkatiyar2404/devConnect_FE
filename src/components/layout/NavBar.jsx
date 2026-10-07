@@ -1,9 +1,11 @@
 import axios from "axios";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router";
 import { BASE_URL, DEFAULT_AVATAR } from "../../utils/constants";
 import { removeUser } from "../../features/profile/userSlice";
 import BrandMark from "../common/BrandMark";
+import { getErrorMessage } from "../../utils/errorUtils";
 
 const NAV_LINKS = [
   { to: "/", label: "Feed" },
@@ -16,6 +18,7 @@ const NavBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const isActive = (to) => {
     if (to === "/") return location.pathname === "/";
@@ -23,6 +26,9 @@ const NavBar = () => {
   };
 
   const handleLogout = async () => {
+    if (isLoggingOut) return; // Prevent duplicate requests
+    setIsLoggingOut(true);
+
     try {
       await axios.post(
         BASE_URL + "/logout",
@@ -32,8 +38,9 @@ const NavBar = () => {
         },
       );
     } catch (error) {
-      console.log(error);
+      console.error("Logout failed:", getErrorMessage(error));
     } finally {
+      setIsLoggingOut(false);
       dispatch(removeUser());
       navigate("/login", { replace: true });
     }
@@ -115,10 +122,18 @@ const NavBar = () => {
                   <li>
                     <button
                       type="button"
-                      className="text-error"
+                      className="text-error flex items-center gap-2"
                       onClick={handleLogout}
+                      disabled={isLoggingOut}
                     >
-                      Logout
+                      {isLoggingOut ? (
+                        <>
+                          <span className="loading loading-spinner loading-xs" />
+                          <span>Logging out…</span>
+                        </>
+                      ) : (
+                        "Logout"
+                      )}
                     </button>
                   </li>
                 </ul>

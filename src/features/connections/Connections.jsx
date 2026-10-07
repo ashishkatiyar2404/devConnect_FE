@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useEffect } from "react";
-import { Link } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
 import { DEFAULT_AVATAR, BASE_URL } from "../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "./connectionSlice";
@@ -8,33 +8,68 @@ import PageContainer from "../../components/layout/PageContainer";
 import PageHeader from "../../components/layout/PageHeader";
 import LoadingState from "../../components/common/LoadingState";
 import EmptyState from "../../components/common/EmptyState";
+import ErrorState from "../../components/common/ErrorState";
+import { getErrorMessage } from "../../utils/errorUtils";
 
 const Connections = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const connectionList = useSelector((store) => store.connections);
 
-  const getAllConnections = async () => {
-    try {
-      const response = await axios.get(BASE_URL + "/user/connections", {
-        withCredentials: true,
-      });
-      dispatch(addConnections(response.data.data));
-    } catch (err) {
-      // Handle Error Case
-      console.log(err.response);
-      console.log(err.message);
-    }
-  };
+  const [isLoading, setIsLoading] = useState(!connectionList);
+  const [error, setError] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
-    getAllConnections();
-  }, []);
+    let isCancelled = false;
 
-  if (!connectionList) {
+    const fetchConnections = async () => {
+      try {
+        const response = await axios.get(BASE_URL + "/user/connections", {
+          withCredentials: true,
+        });
+        if (!isCancelled) {
+          dispatch(addConnections(response.data?.data || []));
+          setError(null);
+        }
+      } catch (err) {
+        if (!isCancelled) {
+          if (err.response?.status === 401) {
+            navigate("/login");
+            return;
+          }
+          const message = getErrorMessage(
+            err,
+            "Failed to load connections. Please try again.",
+          );
+          setError(message);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchConnections();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [dispatch, navigate, refreshTrigger]);
+
+  const handleRefresh = () => {
+    if (isLoading) return; // Prevent duplicate requests
+    setIsLoading(true);
+    setError(null);
+    setRefreshTrigger((prev) => prev + 1);
+  };
+
+  if (isLoading && !connectionList) {
     return <LoadingState label="Loading connections…" />;
   }
 
-  if (connectionList.length === 0) {
+  if (error && !connectionList) {
     return (
       <PageContainer>
         <PageHeader
@@ -42,10 +77,38 @@ const Connections = () => {
           title="Connections"
           description="People you've both signalled interest in."
         />
+        <ErrorState
+          title="Unable to load connections"
+          description={error}
+          onRetry={handleRefresh}
+          retryLabel="Retry"
+        />
+      </PageContainer>
+    );
+  }
+
+  if (!connectionList || connectionList.length === 0) {
+    return (
+      <PageContainer>
+        <PageHeader
+          kicker="Network"
+          title="Connections"
+          description="People you've both signalled interest in."
+        />
+        {error && (
+          <div className="alert alert-error alert-soft mb-6 text-sm">
+            {error}
+          </div>
+        )}
         <EmptyState
           icon="◎"
           title="No connections yet"
           description="Explore the feed and mark developers as interested. When they do the same, they show up here."
+          action={
+            <Link to="/" className="btn btn-primary btn-sm min-h-10">
+              Discover developers
+            </Link>
+          }
         />
       </PageContainer>
     );
@@ -59,7 +122,25 @@ const Connections = () => {
         description={`${connectionList.length} developer${
           connectionList.length === 1 ? "" : "s"
         } in your circle.`}
+        actions={
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={handleRefresh}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <span className="loading loading-spinner loading-xs" />
+            ) : (
+              "Refresh"
+            )}
+          </button>
+        }
       />
+
+      {error && (
+        <div className="alert alert-error alert-soft mb-4 text-sm">{error}</div>
+      )}
 
       <ul className="space-y-4">
         {connectionList.map((connection) => {

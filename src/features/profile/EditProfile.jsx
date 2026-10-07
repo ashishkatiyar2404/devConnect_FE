@@ -1,10 +1,11 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BASE_URL } from "../../utils/constants";
 import UserCard from "../../components/common/UserCard";
 import { useDispatch } from "react-redux";
 import { addUser } from "./userSlice";
 import PageHeader from "../../components/layout/PageHeader";
+import { getErrorMessage } from "../../utils/errorUtils";
 
 const EditProfile = ({ userData }) => {
   const dispatch = useDispatch();
@@ -21,6 +22,15 @@ const EditProfile = ({ userData }) => {
   const [error, setError] = useState("");
   const [toast, setToast] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const toastTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -31,6 +41,8 @@ const EditProfile = ({ userData }) => {
   };
 
   const handleSaveChanges = async () => {
+    if (isLoading) return; // Prevent duplicate requests
+
     try {
       setError("");
       setToast(false);
@@ -42,14 +54,14 @@ const EditProfile = ({ userData }) => {
         { withCredentials: true },
       );
 
-      dispatch(addUser(profileChangesResponse.data.data));
+      dispatch(addUser(profileChangesResponse.data?.data));
       setToast(true);
 
-      setTimeout(() => setToast(false), 3000);
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+      toastTimerRef.current = setTimeout(() => setToast(false), 3000);
     } catch (err) {
       setError(
-        err?.response?.data?.message ||
-          "Failed to update profile. Please try again.",
+        getErrorMessage(err, "Failed to update profile. Please try again."),
       );
     } finally {
       setIsLoading(false);
@@ -80,6 +92,7 @@ const EditProfile = ({ userData }) => {
                   className="input input-bordered w-full bg-base-200"
                   value={profileData.firstName}
                   onChange={handleInputChange}
+                  disabled={isLoading}
                 />
               </label>
 
@@ -93,6 +106,7 @@ const EditProfile = ({ userData }) => {
                   className="input input-bordered w-full bg-base-200"
                   value={profileData.lastName}
                   onChange={handleInputChange}
+                  disabled={isLoading}
                 />
               </label>
 
@@ -108,6 +122,7 @@ const EditProfile = ({ userData }) => {
                     className="input input-bordered w-full bg-base-200"
                     value={profileData.age}
                     onChange={handleInputChange}
+                    disabled={isLoading}
                   />
                 </label>
 
@@ -120,6 +135,7 @@ const EditProfile = ({ userData }) => {
                     className="select select-bordered w-full bg-base-200"
                     value={profileData.gender}
                     onChange={handleInputChange}
+                    disabled={isLoading}
                   >
                     <option value="">Select</option>
                     <option value="male">Male</option>
@@ -139,6 +155,7 @@ const EditProfile = ({ userData }) => {
                   className="input input-bordered w-full bg-base-200"
                   value={profileData.photoUrl}
                   onChange={handleInputChange}
+                  disabled={isLoading}
                 />
               </label>
 
@@ -152,6 +169,7 @@ const EditProfile = ({ userData }) => {
                   className="textarea textarea-bordered w-full bg-base-200"
                   value={profileData.about}
                   onChange={handleInputChange}
+                  disabled={isLoading}
                 />
               </label>
             </div>
@@ -169,7 +187,10 @@ const EditProfile = ({ userData }) => {
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <span className="loading loading-spinner loading-sm"></span>
+                  <>
+                    <span className="loading loading-spinner loading-sm mr-2"></span>
+                    <span>Saving changes…</span>
+                  </>
                 ) : (
                   "Save Changes"
                 )}
