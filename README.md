@@ -140,6 +140,15 @@ npm run lint
 
 ---
 
+## 👨‍💻 Author
+
+**Ashish Katiyar**
+
+- GitHub: [@ashishkatiyar2404](https://github.com/ashishkatiyar2404)
+- Linkedin: [Ashish Katiyar](https://www.linkedin.com/in/ashish-katiyar-42b194158/)
+
+---
+
 ## 📄 License
 
-This project is open-source and available under the [MIT License](LICENSE).
+This project is licensed under the **ISC License**.
