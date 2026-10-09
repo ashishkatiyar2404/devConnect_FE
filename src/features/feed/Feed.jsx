@@ -1,7 +1,6 @@
-import axios from "axios";
+import axiosClient from "../../api/axiosClient";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { BASE_URL } from "../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addFeed } from "./feedSlice";
 import PageContainer from "../../components/layout/PageContainer";
@@ -26,9 +25,7 @@ const Feed = () => {
 
     const fetchFeed = async () => {
       try {
-        const feedResponse = await axios.get(BASE_URL + "/user/feed", {
-          withCredentials: true,
-        });
+        const feedResponse = await axiosClient.get("/user/feed");
         if (!isCancelled) {
           dispatch(addFeed(feedResponse.data?.data || []));
           setError(null);

@@ -1,8 +1,8 @@
-import axios from "axios";
+import axiosClient from "../../api/axiosClient";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router";
-import { BASE_URL, DEFAULT_AVATAR } from "../../utils/constants";
+import { DEFAULT_AVATAR } from "../../utils/constants";
 import { removeUser } from "../../features/profile/userSlice";
 import BrandMark from "../common/BrandMark";
 import { getErrorMessage } from "../../utils/errorUtils";
@@ -30,13 +30,7 @@ const NavBar = () => {
     setIsLoggingOut(true);
 
     try {
-      await axios.post(
-        BASE_URL + "/logout",
-        {},
-        {
-          withCredentials: true,
-        },
-      );
+      await axiosClient.post("/logout");
     } catch (error) {
       console.error("Logout failed:", getErrorMessage(error));
     } finally {

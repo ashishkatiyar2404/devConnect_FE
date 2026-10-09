@@ -1,6 +1,6 @@
-import axios from "axios";
+import axiosClient from "../../api/axiosClient";
 import { useState } from "react";
-import { BASE_URL, DEFAULT_AVATAR } from "../../utils/constants";
+import { DEFAULT_AVATAR } from "../../utils/constants";
 import { useDispatch } from "react-redux";
 import { removeUserFromFeed } from "../../features/feed/feedSlice";
 import { getErrorMessage } from "../../utils/errorUtils";
@@ -19,11 +19,7 @@ const UserCard = ({ userData, showActions = true }) => {
     setActionError("");
 
     try {
-      await axios.post(
-        `${BASE_URL}/request/send/${status}/${targetId}`,
-        {},
-        { withCredentials: true },
-      );
+      await axiosClient.post(`/request/send/${status}/${targetId}`);
       dispatch(removeUserFromFeed(targetId));
     } catch (err) {
       const message = getErrorMessage(

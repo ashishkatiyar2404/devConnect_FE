@@ -1,6 +1,5 @@
-import axios from "axios";
+import axiosClient from "../../api/axiosClient";
 import { useEffect, useRef, useState } from "react";
-import { BASE_URL } from "../../utils/constants";
 import UserCard from "../../components/common/UserCard";
 import { useDispatch } from "react-redux";
 import { addUser } from "./userSlice";
@@ -48,10 +47,9 @@ const EditProfile = ({ userData }) => {
       setToast(false);
       setIsLoading(true);
 
-      const profileChangesResponse = await axios.patch(
-        `${BASE_URL}/profile/edit`,
+      const profileChangesResponse = await axiosClient.patch(
+        "/profile/edit",
         profileData,
-        { withCredentials: true },
       );
 
       dispatch(addUser(profileChangesResponse.data?.data));

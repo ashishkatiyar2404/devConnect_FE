@@ -1,7 +1,7 @@
-import axios from "axios";
+import axiosClient from "../../api/axiosClient";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { DEFAULT_AVATAR, BASE_URL } from "../../utils/constants";
+import { DEFAULT_AVATAR } from "../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "./connectionSlice";
 import PageContainer from "../../components/layout/PageContainer";
@@ -25,9 +25,7 @@ const Connections = () => {
 
     const fetchConnections = async () => {
       try {
-        const response = await axios.get(BASE_URL + "/user/connections", {
-          withCredentials: true,
-        });
+        const response = await axiosClient.get("/user/connections");
         if (!isCancelled) {
           dispatch(addConnections(response.data?.data || []));
           setError(null);
