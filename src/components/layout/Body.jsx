@@ -3,7 +3,6 @@ import { Outlet, useLocation, useNavigate } from "react-router";
 import axios from "axios";
 import "../../api/socket";
 import NavBar from "./NavBar";
-import { BASE_URL } from "../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../../features/profile/userSlice";
 import Footer from "./Footer";
@@ -24,9 +23,7 @@ const Body = () => {
 
     const fetchSession = async () => {
       try {
-        const response = await axios.get(BASE_URL + "/profile/view", {
-          withCredentials: true,
-        });
+        const response = await axios.get("/profile/view");
         if (!isCancelled) {
           dispatch(addUser(response.data?.data));
         }

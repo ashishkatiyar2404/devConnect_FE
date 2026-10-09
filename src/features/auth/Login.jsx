@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useState } from "react";
-import { BASE_URL } from "../../utils/constants";
 import { useDispatch } from "react-redux";
 import { addUser } from "../profile/userSlice";
 import { useNavigate } from "react-router";
@@ -36,9 +35,7 @@ const Login = ({ initialMode = "login" }) => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(BASE_URL + "/login", loginData, {
-        withCredentials: true,
-      });
+      const response = await axios.post("/login", loginData);
       dispatch(addUser(response.data?.data));
       navigate("/");
     } catch (e) {
@@ -59,9 +56,7 @@ const Login = ({ initialMode = "login" }) => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(BASE_URL + "/signup", signUpData, {
-        withCredentials: true,
-      });
+      const response = await axios.post("/signup", signUpData);
 
       if (response.status === 201 || response.status === 200) {
         navigate("/login");
