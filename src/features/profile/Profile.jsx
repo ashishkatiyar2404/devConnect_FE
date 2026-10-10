@@ -6,7 +6,6 @@ import EditProfile from "./EditProfile";
 import PageContainer from "../../components/layout/PageContainer";
 import LoadingState from "../../components/common/LoadingState";
 import ErrorState from "../../components/common/ErrorState";
-import { BASE_URL } from "../../utils/constants";
 import { addUser } from "./userSlice";
 import { getErrorMessage } from "../../utils/errorUtils";
 
@@ -28,9 +27,7 @@ const Profile = () => {
 
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(BASE_URL + "/profile/view", {
-          withCredentials: true,
-        });
+        const response = await axios.get("/profile/view");
         if (!isCancelled) {
           dispatch(addUser(response.data?.data));
           setError(null);

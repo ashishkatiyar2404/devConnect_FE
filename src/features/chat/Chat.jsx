@@ -7,7 +7,6 @@ import EmptyState from "../../components/common/EmptyState";
 import LoadingState from "../../components/common/LoadingState";
 import ErrorState from "../../components/common/ErrorState";
 import axios from "axios";
-import { BASE_URL } from "../../utils/constants";
 import { getErrorMessage } from "../../utils/errorUtils";
 
 const Chat = () => {
@@ -30,9 +29,7 @@ const Chat = () => {
 
     const fetchMessages = async () => {
       try {
-        const response = await axios.get(BASE_URL + "/chat/" + targetUserId, {
-          withCredentials: true,
-        });
+        const response = await axios.get(`/chat/${targetUserId}`);
         if (!isCancelled) {
           const marshalledMessages = (
             response.data?.data?.messages || []

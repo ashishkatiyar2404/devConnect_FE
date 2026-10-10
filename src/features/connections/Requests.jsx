@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { DEFAULT_AVATAR, BASE_URL } from "../../utils/constants";
+import { DEFAULT_AVATAR } from "../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addRequests, removeRequest } from "./requestSlice";
 import PageContainer from "../../components/layout/PageContainer";
@@ -27,9 +27,7 @@ const Requests = () => {
 
     const fetchRequests = async () => {
       try {
-        const response = await axios.get(BASE_URL + "/user/request/received", {
-          withCredentials: true,
-        });
+        const response = await axios.get("/user/request/received");
         if (!isCancelled) {
           dispatch(addRequests(response.data?.data || []));
           setFetchError(null);
@@ -74,11 +72,7 @@ const Requests = () => {
     setActionError(null);
 
     try {
-      await axios.post(
-        BASE_URL + `/request/review/${status}/${_id}`,
-        {},
-        { withCredentials: true },
-      );
+      await axios.post(`/request/review/${status}/${_id}`);
       dispatch(removeRequest(_id));
     } catch (err) {
       const message = getErrorMessage(
