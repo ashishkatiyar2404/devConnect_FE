@@ -85,7 +85,7 @@ devConnect_FE/
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- [DevConnect Backend](https://github.com/ashishkatiyar2404/devConnect) running on `http://localhost:8000`
+- [DevConnect Backend](https://github.com/ashishkatiyar2404/devConnect_BE) running on `http://localhost:8000`
 
 ### 1. Installation
 
