@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "./connectionSlice";
 import PageContainer from "../../components/layout/PageContainer";
 import PageHeader from "../../components/layout/PageHeader";
-import LoadingState from "../../components/common/LoadingState";
+import { ConnectionCardShimmer } from "../../components/common/Shimmer";
 import EmptyState from "../../components/common/EmptyState";
 import ErrorState from "../../components/common/ErrorState";
 import { getErrorMessage } from "../../utils/errorUtils";
@@ -16,7 +16,7 @@ const Connections = () => {
   const navigate = useNavigate();
   const connectionList = useSelector((store) => store.connections);
 
-  const [isLoading, setIsLoading] = useState(!connectionList);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -63,8 +63,25 @@ const Connections = () => {
     setRefreshTrigger((prev) => prev + 1);
   };
 
-  if (isLoading && !connectionList) {
-    return <LoadingState label="Loading connections…" />;
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <PageHeader
+          kicker="Network"
+          title="Connections"
+          description="People you've both signalled interest in."
+          actions={
+            <button type="button" className="btn btn-ghost btn-sm" disabled>
+              <span className="loading loading-spinner loading-xs" />
+            </button>
+          }
+        />
+        <ConnectionCardShimmer
+          count={connectionList?.length || 4}
+          variant="connection"
+        />
+      </PageContainer>
+    );
   }
 
   if (error && !connectionList) {
@@ -140,7 +157,7 @@ const Connections = () => {
         <div className="alert alert-error alert-soft mb-4 text-sm">{error}</div>
       )}
 
-      <ul className="space-y-4">
+      <ul className="space-y-4 animate-fade-in">
         {connectionList.map((connection) => {
           const { _id, firstName, lastName, photoUrl, age, gender, about } =
             connection;
