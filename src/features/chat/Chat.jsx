@@ -4,7 +4,7 @@ import { createSocketConnection } from "../../api/socket";
 import { useSelector } from "react-redux";
 import PageContainer from "../../components/layout/PageContainer";
 import EmptyState from "../../components/common/EmptyState";
-import LoadingState from "../../components/common/LoadingState";
+import { ChatShimmer } from "../../components/common/Shimmer";
 import ErrorState from "../../components/common/ErrorState";
 import axios from "axios";
 import { getErrorMessage } from "../../utils/errorUtils";
@@ -146,10 +146,7 @@ const Chat = () => {
 
         <div className="flex-1 space-y-2 overflow-y-auto bg-base-200/40 p-4 sm:p-5">
           {isLoading ? (
-            <LoadingState
-              label="Loading messages…"
-              className="min-h-[240px]"
-            />
+            <ChatShimmer />
           ) : error ? (
             <ErrorState
               title="Unable to load messages"
@@ -163,24 +160,26 @@ const Chat = () => {
               description="Say hello and start the conversation."
             />
           ) : (
-            messages.map((msg, index) => {
-              const isMe = user?.firstName === msg.firstName;
-              return (
-                <div
-                  key={index}
-                  className={`chat ${isMe ? "chat-end" : "chat-start"}`}
-                >
-                  <div className="chat-header text-xs opacity-70">
-                    {`${msg.firstName || ""} ${msg.lastName || ""}`.trim() || "User"}
-                  </div>
+            <div className="space-y-2 animate-fade-in">
+              {messages.map((msg, index) => {
+                const isMe = user?.firstName === msg.firstName;
+                return (
                   <div
-                    className={`chat-bubble ${isMe ? "chat-bubble-primary" : ""}`}
+                    key={index}
+                    className={`chat ${isMe ? "chat-end" : "chat-start"}`}
                   >
-                    {msg.text}
+                    <div className="chat-header text-xs opacity-70">
+                      {`${msg.firstName || ""} ${msg.lastName || ""}`.trim() || "User"}
+                    </div>
+                    <div
+                      className={`chat-bubble ${isMe ? "chat-bubble-primary" : ""}`}
+                    >
+                      {msg.text}
+                    </div>
                   </div>
-                </div>
-              );
-            })
+                );
+              })}
+            </div>
           )}
           <div ref={chatEndRef} />
         </div>

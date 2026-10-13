@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addRequests, removeRequest } from "./requestSlice";
 import PageContainer from "../../components/layout/PageContainer";
 import PageHeader from "../../components/layout/PageHeader";
-import LoadingState from "../../components/common/LoadingState";
+import { ConnectionCardShimmer } from "../../components/common/Shimmer";
 import EmptyState from "../../components/common/EmptyState";
 import ErrorState from "../../components/common/ErrorState";
 import { getErrorMessage } from "../../utils/errorUtils";
@@ -16,7 +16,7 @@ const Requests = () => {
   const navigate = useNavigate();
   const requestList = useSelector((store) => store.requests);
 
-  const [isLoading, setIsLoading] = useState(!requestList);
+  const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [activeAction, setActiveAction] = useState(null); // { id: string, status: string } | null
@@ -85,8 +85,25 @@ const Requests = () => {
     }
   };
 
-  if (isLoading && !requestList) {
-    return <LoadingState label="Loading requests…" />;
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <PageHeader
+          kicker="Inbox"
+          title="Connection requests"
+          description="Developers who want to connect with you."
+          actions={
+            <button type="button" className="btn btn-ghost btn-sm" disabled>
+              <span className="loading loading-spinner loading-xs" />
+            </button>
+          }
+        />
+        <ConnectionCardShimmer
+          count={requestList?.length || 3}
+          variant="request"
+        />
+      </PageContainer>
+    );
   }
 
   if (fetchError && !requestList) {
@@ -157,7 +174,7 @@ const Requests = () => {
         </div>
       )}
 
-      <ul className="space-y-4">
+      <ul className="space-y-4 animate-fade-in">
         {requestList.map((request) => {
           const sender = request.fromUserId || {};
           const { firstName, lastName, photoUrl, age, gender, about } = sender;

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import axios from "axios";
 import EditProfile from "./EditProfile";
 import PageContainer from "../../components/layout/PageContainer";
-import LoadingState from "../../components/common/LoadingState";
+import { ProfileShimmer } from "../../components/common/Shimmer";
 import ErrorState from "../../components/common/ErrorState";
 import { addUser } from "./userSlice";
 import { getErrorMessage } from "../../utils/errorUtils";
@@ -66,7 +66,11 @@ const Profile = () => {
   };
 
   if (isLoading && !user) {
-    return <LoadingState label="Loading your profile…" />;
+    return (
+      <PageContainer>
+        <ProfileShimmer />
+      </PageContainer>
+    );
   }
 
   if (error && !user) {
@@ -97,7 +101,9 @@ const Profile = () => {
 
   return (
     <PageContainer>
-      <EditProfile userData={user} />
+      <div className="animate-fade-in">
+        <EditProfile userData={user} />
+      </div>
     </PageContainer>
   );
 };

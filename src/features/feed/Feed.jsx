@@ -6,7 +6,7 @@ import { addFeed } from "./feedSlice";
 import PageContainer from "../../components/layout/PageContainer";
 import PageHeader from "../../components/layout/PageHeader";
 import EmptyState from "../../components/common/EmptyState";
-import LoadingState from "../../components/common/LoadingState";
+import { UserCardShimmer } from "../../components/common/Shimmer";
 import ErrorState from "../../components/common/ErrorState";
 import UserCard from "../../components/common/UserCard";
 import { getErrorMessage } from "../../utils/errorUtils";
@@ -16,7 +16,7 @@ const Feed = () => {
   const navigate = useNavigate();
   const userFeedData = useSelector((store) => store.feed);
 
-  const [isLoading, setIsLoading] = useState(!userFeedData);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -63,8 +63,22 @@ const Feed = () => {
     setRefreshTrigger((prev) => prev + 1);
   };
 
-  if (isLoading && !userFeedData) {
-    return <LoadingState label="Finding developers…" />;
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <PageHeader
+          kicker="Discover"
+          title="Your feed"
+          description="Signal interest in developers you want to work with. They only see you if they signal back."
+          actions={
+            <button type="button" className="btn btn-ghost btn-sm" disabled>
+              <span className="loading loading-spinner loading-xs" />
+            </button>
+          }
+        />
+        <UserCardShimmer />
+      </PageContainer>
+    );
   }
 
   if (error && !userFeedData) {
@@ -138,7 +152,9 @@ const Feed = () => {
       {error && (
         <div className="alert alert-error alert-soft mb-4 text-sm">{error}</div>
       )}
-      <UserCard userData={userFeedData[0]} />
+      <div key={userFeedData[0]._id} className="animate-fade-in">
+        <UserCard userData={userFeedData[0]} />
+      </div>
     </PageContainer>
   );
 };
