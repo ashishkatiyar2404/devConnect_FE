@@ -15,7 +15,7 @@ https://github.com/user-attachments/assets/1c5d17b8-2271-44dc-9928-8d0903141a5f
 
 ## ⚡ Tech Stack
 
-- **Framework**: [React 19](https://react.dev/)
+- **JS Lib**: [React 19](https://react.dev/)
 - **Build Tool**: [Vite 8](https://vitejs.dev/)
 - **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/) + [React Redux](https://react-redux.js.org/)
 - **Routing**: [React Router 7](https://reactrouter.com/)
