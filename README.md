@@ -5,6 +5,14 @@
 
 ---
 
+## 🎬 Project Demo
+Watch DevConnect in action—from developer discovery and connection requests to profile editing and real-time chat.
+
+
+https://github.com/user-attachments/assets/1c5d17b8-2271-44dc-9928-8d0903141a5f
+
+
+
 ## ⚡ Tech Stack
 
 - **Framework**: [React 19](https://react.dev/)
