@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addUser } from "../profile/userSlice";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import BrandMark from "../../components/common/BrandMark";
 import { getErrorMessage } from "../../utils/errorUtils";
 
@@ -22,6 +22,7 @@ const initialSignupState = {
 const Login = ({ initialMode = "login" }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [loginData, setLoginData] = useState(initalLoginState);
   const [signUpData, setSignUpData] = useState(initialSignupState);
@@ -37,7 +38,8 @@ const Login = ({ initialMode = "login" }) => {
     try {
       const response = await axios.post("/login", loginData);
       dispatch(addUser(response.data?.data));
-      navigate("/");
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
     } catch (e) {
       setError(
         getErrorMessage(
@@ -285,9 +287,7 @@ const Login = ({ initialMode = "login" }) => {
             {isLoading ? (
               <>
                 <span className="loading loading-spinner loading-sm mr-2" />
-                <span>
-                  {isLoginForm ? "Signing in…" : "Creating account…"}
-                </span>
+                <span>{isLoginForm ? "Signing in…" : "Creating account…"}</span>
               </>
             ) : isLoginForm ? (
               "Login"
