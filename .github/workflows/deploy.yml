@@ -77,3 +77,13 @@ jobs:
           rsync -az --delete \
             -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" \
             dist/ "$USER@$HOST:/home/ubuntu/devconnect_FE/"
+
+      - name: Publish frontend to Nginx
+        env:
+          HOST: ${{ secrets.EC2_HOST }}
+          USER: ${{ secrets.EC2_USER }}
+        run: |
+          ssh -i ~/.ssh/id_ed25519 \
+            -o StrictHostKeyChecking=yes \
+            "$USER@$HOST" \
+            'sudo -n rsync -av --delete /home/ubuntu/devconnect_FE/ /var/www/html/'
