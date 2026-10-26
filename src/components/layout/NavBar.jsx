@@ -13,7 +13,7 @@ const NAV_LINKS = [
   { to: "/requests", label: "Requests" },
 ];
 
-const NavBar = () => {
+const NavBar = ({ isAuthChecking = false }) => {
   const user = useSelector((store) => store.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -134,6 +134,7 @@ const NavBar = () => {
               </div>
             </>
           ) : (
+            !isAuthChecking &&
             location.pathname !== "/login" && (
               <Link to="/login" className="btn btn-primary btn-sm">
                 Log in

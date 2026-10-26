@@ -39,11 +39,12 @@ axios.interceptors.response.use(
     if (status === 401) {
       const currentPath =
         typeof window !== "undefined" ? window.location.pathname : "";
-      const isAuthPage =
-        currentPath === "/login" || currentPath === "/signup";
+      const isAuthPage = currentPath === "/login" || currentPath === "/signup";
       const requestUrl = error.config?.url || "";
       const isAuthEndpoint =
-        requestUrl.includes("/login") || requestUrl.includes("/signup");
+        requestUrl.includes("/login") ||
+        requestUrl.includes("/signup") ||
+        requestUrl.includes("/profile/view");
 
       // Don't auto-redirect if user is already on auth page or attempting login/signup
       if (!isAuthPage && !isAuthEndpoint) {
@@ -68,4 +69,3 @@ axios.interceptors.response.use(
 );
 
 export default axios;
-
